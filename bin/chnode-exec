@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+chnode_sh="${0%/*}/../share/chnode/chnode.sh"
+source "$chnode_sh"
+
+case "$1" in
+	-h|--help)
+		echo "usage: chnode-exec NODE [NODEOPTS] -- COMMAND [ARGS...]"
+		exit
+		;;
+	-V|--version)
+		echo "chnode version $CHNODE_VERSION"
+		exit
+		;;
+esac
+
+if (( $# == 0 )); then
+	echo "chnode-exec: NODE and COMMAND required" >&2
+	exit 1
+fi
+
+argv=()
+
+for arg in "$@"; do
+	shift
+
+	if [[ "$arg" == "--" ]]; then break
+	else                          argv+=($arg)
+	fi
+done
+
+if (( $# == 0 )); then
+	echo "chnode-exec: COMMAND required" >&2
+	exit 1
+fi
+
+shell_opts=("-l")
+[[ -t 0 ]] && shell_opts+=("-i")
+
+source_command="command -v chnode >/dev/null || source $chnode_sh"
+chnode_command="chnode $(printf "%q " "${argv[@]}")"
+sub_command="$(printf "%q " "$@")"
+command="$source_command; $chnode_command && $sub_command"
+
+exec "$SHELL" "${shell_opts[@]}" -c "$command"

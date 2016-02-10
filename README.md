@@ -4,7 +4,6 @@ Changes the current Node. Basically what you get if you `s/ruby/node/g` with [ch
 
 ## Features
 
-* Updates `$PATH`.
 * Calls `hash -r` to clear the command-lookup hash-table.
 * Fuzzy matching of Nodes by name.
 * Defaults to the system Node.
@@ -56,6 +55,7 @@ If you wish to enable chnode system-wide, add the following to
 ``` bash
 if [ -n "$BASH_VERSION" ] || [ -n "$ZSH_VERSION" ]; then
   source /usr/local/share/chnode/chnode.sh
+  export PATH=$HOME/.nodes/.current:$PATH
   ...
 fi
 ```
@@ -81,28 +81,6 @@ NODES+=(
 )
 ```
 
-### Migrating
-
-If you are migrating from another Node manager, set `RUBIES` accordingly:
-
-#### RVM
-
-``` bash
-RUBIES+=(~/.rvm/rubies/*)
-```
-
-#### rbenv
-
-``` bash
-RUBIES+=(~/.rbenv/versions/*)
-```
-
-#### rbfu
-
-``` bash
-RUBIES+=(~/.rbfu/rubies/*)
-```
-
 ### Auto-Switching
 
 If you want chnode to auto-switch the current version of Node when you `cd`
@@ -123,9 +101,9 @@ https://gist.github.com/1912050
 If you wish to set a default Node, simply call `chnode` in `~/.bash_profile` or
 `~/.zprofile`:
 
-    chnode 5.3.0
+    chnode v5.3.0
 
 If you have enabled auto-switching, simply create a `.node-version` file:
 
-    echo "5.3.0" > ~/.node-version
+    echo "v5.3.0" > ~/.node-version
 

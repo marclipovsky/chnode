@@ -10,24 +10,28 @@ function chnode_reset()
 {
 	[[ -z "$NODE_ROOT" ]] && return
 
-	PATH=":$PATH:"; PATH="${PATH//:$NODE_ROOT\/bin:/:}"
-
-	PATH="${PATH#:}"; PATH="${PATH%:}"
+  rm $HOME/.nodes/.current
+  ln -s $NODE_ROOT $HOME/.nodes/.current
 	unset NODE_ROOT
 	hash -r
 }
 
 function chnode_use()
 {
-	if [[ ! -x "$1/bin/node" ]]; then
-		echo "chnode: $1/bin/node not executable" >&2
+  local node_path=$1
+  [[ $1 =~ $HOME ]] || node_path=$HOME/.nodes/$1
+  
+	if [[ ! -x "$node_path/bin/node" ]]; then
+		echo "chnode: $node_path/bin/node not executable" >&2
 		return 1
 	fi
 
 	[[ -n "$NODE_ROOT" ]] && chnode_reset
 
-	export NODE_ROOT="$1"
-	export PATH="$NODE_ROOT/bin:$PATH"
+	export NODE_ROOT="$node_path"
+  
+  rm $HOME/.nodes/.current
+  ln -s $NODE_ROOT $HOME/.nodes/.current
 	hash -r
 }
 

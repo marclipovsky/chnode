@@ -35,6 +35,13 @@ function chnode_use()
 	hash -r
 }
 
+function chnode_local()
+{
+	touch .node-version
+	echo $1 > .node-version
+	chnode_use $1 && echo "Using node $1"
+}
+
 function chnode()
 {
 	case "$1" in
